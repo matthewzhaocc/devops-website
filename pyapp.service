@@ -1,0 +1,10 @@
+[Unit]
+Description=A Python App
+
+[Service]
+ExecStart=gunicorn --workers=10 --bind 0.0.0.0:3000 wsgi:app
+WorkingDirectory=/app
+User=appsvc
+group=appsvc
+[Install]
+WantedBy=multi-user.target

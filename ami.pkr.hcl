@@ -16,13 +16,14 @@ source "amazon-ebs" "app_src" {
   instance_type = "t3a.micro"
   region        = "us-west-1"
   secret_key    = "${var.aws_secret_key}"
-  source_ami    = "ami-096fda3c22c1c990a"
+  source_ami    = "ami-09d9c5cdcfb8fc655"
   ssh_username  = "ec2-user"
-
 }
+
 build {
   sources = ["source.amazon-ebs.app_src"]
-  provisioner "shell" {
-    inline = ["echo fuckyou"]
+  provisioner "ansible" {
+    playbook_file = "./install..yml"
+    user          = "ec2-user"
   }
 }

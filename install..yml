@@ -1,0 +1,48 @@
+---
+- hosts: all
+  tasks:
+  - name: update system
+    become: yes
+    dnf:
+      name: "*"
+      state: latest
+  - name: install python3 and pip3
+    become: yes
+    dnf:
+      name: 
+      - python3
+      - python3-pip
+      state: present
+  - name: create service user
+    become: yes
+    user:
+      name: appsvc
+      shell: /usr/sbin/nologin
+      expires: -1
+  - name: create app directory
+    become: yes
+    file:
+      path: /app
+      state: directory
+      mode: '700'
+      owner: appsvc
+      group: appsvc
+  - name: copy the application over
+    become: yes
+    synchronize:
+      src: webapp/
+      dest: /app
+  - name: install python dependencies
+    become: yes
+    pip:
+      requirements: /app/requirements.txt
+  - name: install service file
+    become: yes
+    copy:
+      src: pyapp.service
+      dest: /lib/systemd/system/pyapp.service
+  - name: start service
+    systemd:
+      name: pyapp
+      enabled: yes
+      state: started
